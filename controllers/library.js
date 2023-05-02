@@ -1,9 +1,7 @@
 const Book = require("../models/Book");
 
 exports.createBook = (req, res, next) => {
-	// à confirmer en fonction du Body du Front
 	delete req.body._id;
-	// 
 	const book = new Book({
 		...req.body
 	});
