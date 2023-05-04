@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 
-const libraryRoutes = require("./routes/library");
+const libraryRoutes = require("./routes/books");
 const userRoutes = require("./routes/user");
 
 mongoose.connect("mongodb+srv://maximedrouault:9h1nEnZbeMGT42IS@cluster0.fnbnars.mongodb.net/?retryWrites=true&w=majority",

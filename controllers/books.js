@@ -1,4 +1,3 @@
-const { error } = require("console");
 const Book = require("../models/Book");
 const fs = require("fs");
 
@@ -39,7 +38,7 @@ exports.modifyBook = (req, res, next) => {
 	Book.findOne({_id: req.params.id})
 		.then((book) => {
 			if (book.userId != req.auth.userId) {
-				res.status(401).json({ message: "Non-autorisé" });
+				res.status(403).json({ message: "403: unauthorized request" });
 			} else {
 				// Suppresion de l'ancienne image si une nouvelle est insérée dans la modification
 				if (req.file) {
@@ -61,7 +60,7 @@ exports.deleteBook = (req, res, next) => {
 	Book.findOne({ _id: req.params.id })
 		.then(book => {
 			if (book.userId != req.auth.userId) {
-				res.status(401).json({ message: "Non-autorisé" })
+				res.status(403).json({ message: "403: unauthorized request" })
 			} else {
 				const filename = book.imageUrl.split("/images/")[1];
 				fs.unlink(`images/${filename}`, () => {
