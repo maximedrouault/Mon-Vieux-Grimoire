@@ -5,12 +5,19 @@ const auth = require("../middleware/auth");
 const multer = require("../middleware/multer-config");
 const sharp = require("../middleware/sharp");
 
-const libraryCtrl = require("../controllers/books");
+const booksCtrl = require("../controllers/books");
 
-router.post("/", auth, multer, sharp, libraryCtrl.createBook);
-router.get("/:id", libraryCtrl.getOneBook);
-router.get("/", libraryCtrl.getAllBooks);
-router.put("/:id", auth, multer, sharp, libraryCtrl.modifyBook);
-router.delete("/:id", auth, libraryCtrl.deleteBook);
+// Routes CRUD de base.
+
+router.post("/", auth, multer, sharp, booksCtrl.createBook);
+router.get("/:id", booksCtrl.getOneBook);
+router.get("/", booksCtrl.getAllBooks);
+router.put("/:id", auth, multer, sharp, booksCtrl.modifyBook);
+router.delete("/:id", auth, booksCtrl.deleteBook);
+
+// Routes pour la gestion des notes des livres.
+
+router.post("/:id/rating", auth, booksCtrl.createBookRating);
+
 
 module.exports = router;

@@ -1,6 +1,9 @@
 const Book = require("../models/Book");
 const fs = require("fs");
 
+
+// Controleurs CRUD de base.
+
 exports.createBook = (req, res, next) => {
 	const bookObject = JSON.parse(req.body.book);
 	delete bookObject._id;
@@ -35,22 +38,25 @@ exports.modifyBook = (req, res, next) => {
 	} : {...req.body};
 
 	delete bookObject._userId;
+
 	Book.findOne({_id: req.params.id})
 		.then((book) => {
 			if (book.userId != req.auth.userId) {
-				res.status(403).json({ message: "403: unauthorized request" });
+				return res.status(403).json({ message: "403: unauthorized request" });
 			} else {
 				// Suppresion de l'ancienne image si une nouvelle est insérée dans la modification
 				if (req.file) {
 					const oldFilename = book.imageUrl.split("/images/")[1];
 					fs.unlink(`images/${oldFilename}`, (error) => {
-						if (error) res.status(500).json({ error });
+						if (error) {
+							return res.status(500).json({ error });
+						};
 					});
 				};
-				// 
-				Book.updateOne({ _id: req.params.id }, { ...bookObject, _id: req.params.id })
+
+				Book.updateOne({ _id: req.params.id }, bookObject )
 					.then(() => res.status(200).json({ message: "Objet modifié !" }))
-					.catch(error => res.status(401).json({ error }));
+					.catch(error => res.status(400).json({ error }));
 			};
 		})
 		.catch(error => res.status(400).json({ error }));
@@ -60,15 +66,51 @@ exports.deleteBook = (req, res, next) => {
 	Book.findOne({ _id: req.params.id })
 		.then(book => {
 			if (book.userId != req.auth.userId) {
-				res.status(403).json({ message: "403: unauthorized request" })
+				return res.status(403).json({ message: "403: unauthorized request" })
 			} else {
+				// Suppression du fichier image
 				const filename = book.imageUrl.split("/images/")[1];
-				fs.unlink(`images/${filename}`, () => {
+				fs.unlink(`images/${filename}`, (error) => {
+					if (error) {
+						return res.status(500).json({ error });
+					} else {
+					// Si suppression du fichier image OK, suppression du livre en BDD.
 					Book.deleteOne({ _id: req.params.id })
 						.then(() => res.status(200).json({ message: "Objet supprimé !" }))
-						.catch(error => res.status(401).json({ error }));
+						.catch(error => res.status(400).json({ error }));
+					};
 				});
 			};
 		})
 		.catch(error => res.status(500).json({ error }));
+};
+
+
+// Controleur pour la gestion des notes des livres.
+
+exports.createBookRating = (req, res, next) => {
+	// Création de l'objet Rating avec le userId du Token et non celui envoyé par le front pour la sécurité.
+	const ratingObject = { userId: req.auth.userId, grade: req.body.rating };
+
+	if (ratingObject.grade < 0 || ratingObject.grade > 5) {
+		return res.status(400).json({ error });
+	};
+
+	Book.findOne({ _id: req.params.id })
+		.then(book => {
+			if (book.userId === req.auth.userId) {
+				return res.status(403).json({ message: "403: unauthorized request" });
+			};
+			// Contrôle si l'utilisateur a déjà noté ce livre.
+			if (book.ratings.some(rating => rating.userId === req.auth.userId)) {
+				return res.status(403).json({ message: "403: unauthorized request" });
+			};
+			
+			// Enregistrement de la note en BDD.
+			book.ratings.push(ratingObject);
+			book.save()
+				.then(() => res.status(200).json({ book }))
+				.catch(error => res.status(500).json({ error }));
+		})
+		.catch(error => res.status(400).json({ error }));
 };

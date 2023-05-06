@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-// Utilisation de SHARP pour Redimensionner le fichier image préchargé par MULTER
+// Utilisation de SHARP pour Redimensionner le fichier image préchargé par MULTER.
 
 module.exports = (req, res, next) => {
   if (!req.file) {
@@ -26,6 +26,6 @@ module.exports = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
-      return next(err);
+      next(err);
     });
 };

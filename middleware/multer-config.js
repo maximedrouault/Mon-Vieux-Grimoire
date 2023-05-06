@@ -6,7 +6,7 @@ const MIME_TYPES = {
 	"image/png": "png"
 };
 
-// Filtrage pour l'import des images JPG et PNG seulement
+// Filtrage pour l'import des images JPG et PNG seulement.
 
 function fileFilter(req, file, callback) {
 	if (MIME_TYPES[file.mimetype]) {
@@ -16,7 +16,7 @@ function fileFilter(req, file, callback) {
 	};
 };
 
-// Configuration du stockage de Multer
+// Configuration du stockage de Multer pour gérer le chargement du fichier image.
 
 const storage = multer.diskStorage({
 	destination: (req, file, callback) => {
