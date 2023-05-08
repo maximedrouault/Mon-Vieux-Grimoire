@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 
-const libraryRoutes = require("./routes/books");
+const booksRoutes = require("./routes/books");
 const userRoutes = require("./routes/user");
 
 mongoose.connect("mongodb+srv://maximedrouault:9h1nEnZbeMGT42IS@cluster0.fnbnars.mongodb.net/?retryWrites=true&w=majority",
@@ -22,7 +22,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/books", libraryRoutes);
+app.use("/api/books", booksRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/images", express.static(path.join(__dirname, "images")));
 

@@ -1,6 +1,7 @@
 const { error } = require("console");
 const Book = require("../models/Book");
 const fs = require("fs");
+const { bool } = require("sharp");
 
 
 // Controleurs CRUD de base.
@@ -121,4 +122,15 @@ exports.createBookRating = (req, res, next) => {
 				.catch(error => res.status(500).json({ error }));
 		})
 		.catch(error => res.status(400).json({ error }));
+};
+
+
+// Contrôleur pour la récupération des 3 livres ayant les meilleures notes moyennes.
+
+exports.bestAverageRatings = (req, res, next) => {
+	Book.find({})
+		.sort({ averageRating: "descending" })
+		.limit(3)
+			.then((books) => res.status(200).json( books ))
+			.catch(error => res.status(500).json({ error }));
 };
