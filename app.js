@@ -2,10 +2,18 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const dotenv = require("dotenv");
+const rateLimit = require("express-rate-limit");
 
 // Configuration DOTENV
 dotenv.config();
-// 
+
+// Configuration de EXPRESS-RATE-LIMIT
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // Fenêtre de 15 minutes
+  max: 100, // Limit à 100 requêtes par fenêtre
+  standardHeaders: true, // Renvoi des informations de limite dans les en-têtes `RateLimit-*`
+  legacyHeaders: false // Désactivation des anciennes en-têtes de style hérité `X-RateLimit-*`
+})
 
 const booksRoutes = require("./routes/books");
 const userRoutes = require("./routes/user");
@@ -17,6 +25,9 @@ mongoose.connect(`mongodb+srv://maximedrouault:${process.env.DB_PASSWORD}@cluste
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 const app = express();
+
+// Application du RATE-LIMIT à toutes les requêtes.
+app.use(limiter);
 
 app.use(express.json());
 
