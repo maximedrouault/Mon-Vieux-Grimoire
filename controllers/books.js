@@ -1,3 +1,4 @@
+const { error } = require("console");
 const Book = require("../models/Book");
 const fs = require("fs");
 
@@ -97,19 +98,26 @@ exports.createBookRating = (req, res, next) => {
 	};
 
 	Book.findOne({ _id: req.params.id })
-		.then(book => {
+		.then((book) => {
+			// Contrôle si l'utilisateur loggé est le créateur du livre.
 			if (book.userId === req.auth.userId) {
-				return res.status(403).json({ message: "403: unauthorized request" });
+				return res.status(403).json({ message: "403: unauthorized request test" });
 			};
 			// Contrôle si l'utilisateur a déjà noté ce livre.
 			if (book.ratings.some(rating => rating.userId === req.auth.userId)) {
 				return res.status(403).json({ message: "403: unauthorized request" });
 			};
 			
-			// Enregistrement de la note en BDD.
+			// Enregistrement de la note du livre en BDD.
 			book.ratings.push(ratingObject);
 			book.save()
-				.then(() => res.status(200).json({ book }))
+				.then((book) => {
+					// Calcul de la note moyenne et enregistrement de celle-ci en BDD.
+					book.averageRating = Math.round(book.ratings.reduce((sum, rating) => sum + rating.grade, 0) / book.ratings.length);
+					book.save()
+						.then(() => res.status(200).json( book ))
+						.catch(error => res.status(500).json({ error }));
+					})
 				.catch(error => res.status(500).json({ error }));
 		})
 		.catch(error => res.status(400).json({ error }));
