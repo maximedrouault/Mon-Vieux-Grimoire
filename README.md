@@ -58,3 +58,11 @@ Ceci est mon premier projet **Back-end**. J'ai réalisé l'ensemble de ce projet
 - Faites **`NPM INSTALL`** puis **`NPM START`**, cela permettra d'installer les dépendances du projet et de démarrer celui-ci.
 - Ensuite, le **Back-end** sera démarré et écoutera sur le **`PORT : 4000`** par défaut.<br>
 Vous pouvez tester le projet avec **POSTMAN**.
+
+- Si vous voulez tester le projet avec le **Front-End**, vous pouvez procéder comme suit :
+- Clonez le dépôt :<br>
+**`https://github.com/maximedrouault/Mon-Vieux-Grimoire-FRONT-END.git`**
+- À partir du répertoire **Mon-Vieux-Grimoire-FRONT-END** :<br>
+- Faites **`NPM INSTALL`** puis **`NPM START`**, cela permettra d'installer les dépendances du projet et de démarrer celui-ci.<br>
+- Ensuite, le site devrait s'ouvrir tout seul. Si ce n'est pas le cas, vous pouvez y accéder à cette URL : **http://localhost:3000**.<br>
+Vous pourrez ainsi accéder à toutes les fonctionnalités.
